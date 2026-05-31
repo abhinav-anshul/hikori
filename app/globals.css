@@ -131,6 +131,33 @@
     }
   html {
     @apply font-sans;
-    background-color: var(--sidebar);
+    /* Match the hero's soft mint tint (primary at 10% over the page bg) so the
+       macOS overscroll area above the navbar blends with the hero. */
+    background-color: color-mix(in oklab, var(--primary) 10%, var(--background));
     }
 }
+
+/* Marker highlight — the brand-color background sweeps in from the left
+   on first paint, covering the phrase like a highlighter stroke. */
+@keyframes marker-sweep {
+  from { transform: scaleX(0); }
+  to { transform: scaleX(1); }
+}
+
+.marker-highlight::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background-color: var(--primary);
+  transform-origin: left center;
+  animation: marker-sweep 0.5s cubic-bezier(0.22, 1, 0.36, 1) 0.3s both;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .marker-highlight::before {
+    animation: none;
+    transform: scaleX(1);
+  }
+}
+

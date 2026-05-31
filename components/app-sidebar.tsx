@@ -63,7 +63,7 @@ export function AppSidebar({
                                             isActive={isActive}
                                             tooltip={item.title}
                                             render={<Link href={item.href} />}
-                                            className="data-active:text-[#025964] data-active:shadow-sm data-active:ring-1 data-active:ring-sidebar-border"
+                                            className="data-active:text-sidebar-accent-foreground data-active:bg-primary/15 data-active:hover:bg-primary/20 not-data-active:hover:bg-accent not-data-active:hover:text-sidebar-foreground"
                                         >
                                             <item.icon />
                                             <span>{item.title}</span>
