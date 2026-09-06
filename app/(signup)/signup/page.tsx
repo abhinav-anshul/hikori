@@ -2,7 +2,7 @@ import Link from "next/link";
 
 export default function Signup() {
     return (
-        <main className="min-h-svh flex items-center justify-center px-6">
+        <main id="main" className="min-h-svh flex items-center justify-center px-6">
             <div className="w-full max-w-sm space-y-8 text-center">
                 <div className="space-y-1.5">
                     <h1 className="text-2xl font-semibold tracking-tight">

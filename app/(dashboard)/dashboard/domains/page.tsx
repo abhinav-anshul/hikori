@@ -1,4 +1,4 @@
-import { Check, Plus } from "lucide-react";
+import { Check, Globe, Plus } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -65,23 +65,22 @@ export default function Domains() {
                     ) : (
                         <div className="rounded-lg border border-border bg-card p-12">
                             <div className="mx-auto max-w-sm space-y-4 text-center">
-                                <div className="inline-flex items-center rounded-md bg-muted/50 px-3 py-1.5 font-mono text-xs text-muted-foreground">
-                                    <span>go.yourbrand.com</span>
-                                    <span className="text-foreground">/abc</span>
-                                </div>
+                                <Globe className="size-6 mx-auto text-muted-foreground" />
                                 <div className="space-y-1.5">
                                     <h2 className="text-base font-semibold">
                                         No domains yet
                                     </h2>
                                     <p className="text-xs text-muted-foreground">
                                         Connect a custom domain to brand your
-                                        short links. Use the{" "}
-                                        <span className="font-medium text-foreground">
-                                            Add domain
-                                        </span>{" "}
-                                        button above to get started.
+                                        short links.
                                     </p>
                                 </div>
+                                <DomainFormDialog>
+                                    <Button size="sm" className="font-normal">
+                                        <Plus className="size-4" />
+                                        Add domain
+                                    </Button>
+                                </DomainFormDialog>
                             </div>
                         </div>
                     )}

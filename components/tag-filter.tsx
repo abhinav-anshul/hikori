@@ -67,7 +67,7 @@ export function TagFilter({
                 >
                     <span className="text-sm">All links</span>
                     {!current && (
-                        <Check className="size-3.5 text-muted-foreground" />
+                        <Check className="size-3 text-muted-foreground" />
                     )}
                 </DropdownMenuItem>
 
@@ -84,7 +84,7 @@ export function TagFilter({
                         >
                             <TagChip tag={t} />
                             {t.id === current && (
-                                <Check className="size-3.5 text-muted-foreground" />
+                                <Check className="size-3 text-muted-foreground" />
                             )}
                         </DropdownMenuItem>
                     ))

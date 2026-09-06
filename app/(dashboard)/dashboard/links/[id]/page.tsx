@@ -42,7 +42,7 @@ export default async function LinkAnalytics({
                 href="/dashboard/analytics"
                 className="inline-flex items-center gap-1.5 text-xs text-muted-foreground transition-colors hover:text-foreground"
             >
-                <ArrowLeft className="size-3.5" />
+                <ArrowLeft className="size-3" />
                 Back to analytics
             </Link>
 
@@ -94,7 +94,7 @@ export default async function LinkAnalytics({
                             <p className="text-xs font-medium text-muted-foreground">
                                 Total clicks
                             </p>
-                            <p className="mt-1.5 text-3xl font-semibold tracking-tight tabular-nums">
+                            <p className="mt-1.5 text-2xl font-semibold tracking-tight tabular-nums">
                                 {data.total.toLocaleString()}
                             </p>
                         </div>
@@ -102,7 +102,7 @@ export default async function LinkAnalytics({
                             <p className="text-xs font-medium text-muted-foreground">
                                 Unique visitors
                             </p>
-                            <p className="mt-1.5 text-3xl font-semibold tracking-tight tabular-nums">
+                            <p className="mt-1.5 text-lg font-semibold tracking-tight tabular-nums">
                                 {data.uniques.toLocaleString()}
                             </p>
                         </div>

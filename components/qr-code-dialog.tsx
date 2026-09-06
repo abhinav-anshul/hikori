@@ -1,6 +1,6 @@
 "use client";
 
-import { Download, Loader2 } from "lucide-react";
+import { Download } from "lucide-react";
 import QRCode from "qrcode";
 import { useEffect, useState } from "react";
 
@@ -14,6 +14,7 @@ import {
     DialogTitle,
     DialogTrigger,
 } from "@/components/ui/dialog";
+import { Skeleton } from "@/components/ui/skeleton";
 
 const QR_SIZE = 320;
 
@@ -65,9 +66,7 @@ export function QrCodeDialog({
                             className="size-64"
                         />
                     ) : (
-                        <div className="flex size-64 items-center justify-center text-muted-foreground">
-                            <Loader2 className="size-5 animate-spin" />
-                        </div>
+                        <Skeleton className="size-64" />
                     )}
                 </div>
 

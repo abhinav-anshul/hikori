@@ -43,7 +43,7 @@ export default async function DashboardLayout({
                         className="mx-2 data-[orientation=vertical]:h-4"
                     /> */}
                 {/* </header> */}
-                <div className="flex-1 p-6 m-2 bg-background border border-border rounded-lg">{children}</div>
+                <div className="flex-1 p-6 m-2 bg-background border border-border rounded-xl">{children}</div>
             </SidebarInset>
         </SidebarProvider>
     );

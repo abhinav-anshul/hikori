@@ -1,4 +1,4 @@
-import { CornerDownRight, Link2, Plus } from "lucide-react";
+import { AlertTriangle, CornerDownRight, Link2, Plus } from "lucide-react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { LinkFormDialog } from "@/components/link-form-dialog";
@@ -98,6 +98,7 @@ export default async function Links({
         ]);
 
     const links = linksResult.data;
+    const linksError = linksResult.error;
     const sparkRows = (sparklinesResult.data ?? []) as SparkRow[];
     const sparklines = buildSparklineMap(sparkRows, SPARKLINE_DAYS);
 
@@ -115,15 +116,32 @@ export default async function Links({
 
     return (
         <section className="space-y-6">
-            <header className="flex items-center justify-between">
-                <h1 className="text-2xl font-semibold tracking-tight">Links</h1>
+            <div className="space-y-3">
+                <header className="flex items-center justify-between">
+                    <h1 className="text-2xl font-semibold tracking-tight">Links</h1>
+                    <LinkFormDialog availableTags={availableTags} />
+                </header>
                 <div className="flex items-center gap-2">
                     <TagFilter tags={availableTags} current={filterTagId} />
-                    <LinkFormDialog availableTags={availableTags} />
                 </div>
-            </header>
+            </div>
 
-            {links && links.length > 0 ? (
+            {linksError ? (
+                <div className="rounded-lg border border-border bg-card p-12">
+                    <div className="mx-auto max-w-sm space-y-4 text-center">
+                        <AlertTriangle className="size-6 mx-auto text-destructive" />
+                        <div className="space-y-1.5">
+                            <h2 className="text-base font-semibold text-destructive">
+                                Couldn&apos;t load links
+                            </h2>
+                            <p className="text-xs text-muted-foreground">
+                                Something went wrong fetching your links. Try
+                                refreshing the page.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            ) : links && links.length > 0 ? (
                 <ul className="space-y-3">
                     {links.map((link) => {
                         const linkTags = tagsByLink.get(link.id) ?? [];

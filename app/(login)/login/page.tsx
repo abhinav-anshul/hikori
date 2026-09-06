@@ -31,7 +31,7 @@ export default async function Login({
     }
 
     return (
-        <main className="min-h-svh flex items-center justify-center px-6">
+        <main id="main" className="min-h-svh flex items-center justify-center px-6">
             <div className="w-full max-w-sm space-y-8">
                 <div className="space-y-1.5 text-center">
                     <h1 className="text-2xl font-semibold tracking-tight">

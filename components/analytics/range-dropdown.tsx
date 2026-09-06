@@ -40,7 +40,7 @@ export function RangeDropdown({ current }: { current: AnalyticsRange }) {
                     >
                         <span>{r.label}</span>
                         {r.value === current && (
-                            <Check className="size-3.5 text-muted-foreground" />
+                            <Check className="size-3 text-muted-foreground" />
                         )}
                     </DropdownMenuItem>
                 ))}

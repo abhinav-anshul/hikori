@@ -10,3 +10,16 @@ export function getAppHost(): string {
         return "";
     }
 }
+
+// Returns the full origin (with protocol) from NEXT_PUBLIC_APP_URL,
+// e.g. "https://hikori.co". Falls back to the production domain so
+// metadata routes (sitemap, robots) always emit absolute URLs.
+export function getBaseUrl(): string {
+    const url = process.env.NEXT_PUBLIC_APP_URL;
+    if (!url) return "https://hikori.co";
+    try {
+        return new URL(url).origin;
+    } catch {
+        return "https://hikori.co";
+    }
+}

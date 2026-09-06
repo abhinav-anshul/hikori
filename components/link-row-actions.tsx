@@ -40,7 +40,7 @@ export function LinkRowActions({
     };
 
     return (
-        <div className="flex items-center gap-1">
+        <div className="flex items-center gap-2">
             <button
                 type="button"
                 onClick={handleCopy}

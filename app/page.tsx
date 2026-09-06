@@ -9,7 +9,7 @@ export default function Page() {
     const host = getAppHost() || "hikori.co";
 
     return (
-        <main className="relative min-h-svh bg-background">
+        <main id="main" className="relative min-h-svh bg-background">
             {/* Brand name revealed in the overscroll area above the navbar */}
             <div
                 aria-hidden
@@ -45,18 +45,18 @@ export default function Page() {
                     {/* Hero copy */}
                     <section className="flex flex-1 flex-col items-center justify-center gap-6 pt-8 pb-28 text-center">
                         <span className="inline-flex items-center gap-1.5 rounded-full border border-primary/20 bg-primary/10 px-3 py-1 text-xs font-medium">
-                            <Sparkles className="size-3.5" />
+                            <Sparkles className="size-3" />
                             Short links, custom domains & analytics
                         </span>
 
-                        <h1 className="max-w-3xl text-4xl font-semibold leading-[1.1] tracking-tight md:text-5xl">
+                        <h1 className="max-w-3xl text-balance text-4xl font-semibold leading-[1.1] tracking-tight">
                             Short links that drive{" "}
                             <span className="marker-highlight relative isolate inline-block -rotate-2 px-2 text-primary-foreground">
                                 real results
                             </span>
                         </h1>
 
-                        <p className="max-w-xl text-base text-muted-foreground md:text-lg">
+                        <p className="max-w-xl text-pretty text-base text-muted-foreground md:text-lg">
                             Shorten, brand, and{" "}
                             <SquiggleUnderline>track every link</SquiggleUnderline>
                             . Bring your own domain and watch the clicks roll

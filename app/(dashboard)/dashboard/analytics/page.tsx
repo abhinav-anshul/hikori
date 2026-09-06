@@ -27,15 +27,17 @@ export default async function Analytics({
 
     return (
         <section className="space-y-6">
-            <header className="flex items-center justify-between">
-                <h1 className="text-2xl font-semibold tracking-tight">
-                    Analytics
-                </h1>
+            <div className="space-y-3">
+                <header>
+                    <h1 className="text-2xl font-semibold tracking-tight">
+                        Analytics
+                    </h1>
+                </header>
                 <div className="flex items-center gap-2">
                     <BotToggle excluded={excludeBots} />
                     <RangeDropdown current={range} />
                 </div>
-            </header>
+            </div>
 
             {isEmpty ? (
                 <div className="rounded-lg border border-border bg-card p-12">
@@ -59,7 +61,7 @@ export default async function Analytics({
                             <p className="text-xs font-medium text-muted-foreground">
                                 Total clicks
                             </p>
-                            <p className="mt-1.5 text-3xl font-semibold tracking-tight tabular-nums">
+                            <p className="mt-1.5 text-2xl font-semibold tracking-tight tabular-nums">
                                 {data.total.toLocaleString()}
                             </p>
                         </div>
@@ -67,7 +69,7 @@ export default async function Analytics({
                             <p className="text-xs font-medium text-muted-foreground">
                                 Unique visitors
                             </p>
-                            <p className="mt-1.5 text-3xl font-semibold tracking-tight tabular-nums">
+                            <p className="mt-1.5 text-lg font-semibold tracking-tight tabular-nums">
                                 {data.uniques.toLocaleString()}
                             </p>
                         </div>

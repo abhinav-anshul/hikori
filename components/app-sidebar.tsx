@@ -37,6 +37,12 @@ export function AppSidebar({
     signOutAction: () => void | Promise<void>;
 }) {
     const pathname = usePathname();
+    const displayName = userEmail
+        ? userEmail
+              .split("@")[0]
+              .replace(/[._]+/g, " ")
+              .replace(/\b\w/g, (c) => c.toUpperCase())
+        : "";
 
     return (
         <Sidebar collapsible="icon">
@@ -63,7 +69,7 @@ export function AppSidebar({
                                             isActive={isActive}
                                             tooltip={item.title}
                                             render={<Link href={item.href} />}
-                                            className="data-active:text-sidebar-accent-foreground data-active:bg-primary/15 data-active:hover:bg-primary/20 not-data-active:hover:bg-accent not-data-active:hover:text-sidebar-foreground"
+                                            className="transition-colors data-active:text-sidebar-accent-foreground data-active:bg-primary/15 data-active:hover:bg-primary/20"
                                         >
                                             <item.icon />
                                             <span>{item.title}</span>
@@ -95,7 +101,7 @@ export function AppSidebar({
                                         </AvatarFallback>
                                     </Avatar>
                                     <div className="grid flex-1 text-left text-sm leading-tight">
-                                        <span className="truncate font-medium">Abhinav</span>
+                                        <span className="truncate font-medium">{displayName}</span>
                                         <span className="truncate text-xs text-muted-foreground">
                                             {userEmail}
                                         </span>

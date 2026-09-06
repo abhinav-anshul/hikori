@@ -136,7 +136,7 @@ export function LinkFormDialog({
                                 onChange={(e) => setSlug(e.target.value)}
                                 pattern={SLUG_PATTERN}
                                 required
-                                className="pr-9"
+                                className="pr-8"
                             />
                             <button
                                 type="button"
