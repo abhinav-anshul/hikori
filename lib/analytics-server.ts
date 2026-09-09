@@ -15,6 +15,8 @@ const EMPTY: Omit<Analytics, "bucket"> = {
     top_referrers: [],
     top_devices: [],
     top_countries: [],
+    top_browsers: [],
+    top_os: [],
 };
 
 export async function getAnalytics(

@@ -1,4 +1,13 @@
-import { ArrowRight, BarChart3, Globe, Laptop, Link2, MapPin } from "lucide-react";
+import {
+    AppWindow,
+    ArrowRight,
+    BarChart3,
+    Globe,
+    Laptop,
+    Link2,
+    MapPin,
+    Monitor,
+} from "lucide-react";
 import Link from "next/link";
 
 import { BotToggle } from "@/components/analytics/bot-toggle";
@@ -181,6 +190,33 @@ export default async function Analytics({
                                 clicks: c.clicks,
                             }))}
                             emptyLabel="No country data yet."
+                        />
+                    </div>
+
+                    <div className="grid gap-4 md:grid-cols-2">
+                        <TopList
+                            title="Top browsers"
+                            icon={
+                                <AppWindow className="size-4 text-muted-foreground" />
+                            }
+                            items={data.top_browsers.map((b) => ({
+                                key: b.browser,
+                                label: b.browser,
+                                clicks: b.clicks,
+                            }))}
+                            emptyLabel="No browser data yet."
+                        />
+                        <TopList
+                            title="Top operating systems"
+                            icon={
+                                <Monitor className="size-4 text-muted-foreground" />
+                            }
+                            items={data.top_os.map((o) => ({
+                                key: o.os,
+                                label: o.os,
+                                clicks: o.clicks,
+                            }))}
+                            emptyLabel="No OS data yet."
                         />
                     </div>
                 </>

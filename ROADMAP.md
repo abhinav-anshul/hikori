@@ -24,8 +24,8 @@ Snapshot of current state and what to build next, based on a full read of the co
 ## 1. Quick wins
 
 - [x] Fix hardcoded user name — [components/app-sidebar.tsx:98](components/app-sidebar.tsx#L98) now derives display name from the user's email prefix (no `profiles`/name field exists yet)
-- [ ] Rate-limit the redirect endpoint — [app/[slug]/page.tsx](app/[slug]/page.tsx) is public, unauthenticated, and writes to the DB on every hit
-- [ ] Surface browser/OS breakdown in analytics UI — columns already exist in `click_events`, just not queried/displayed
+- [x] Rate-limit the redirect endpoint — [proxy.ts](proxy.ts) now blocks with 429 (30 req/min/IP, sliding window) via [lib/rate-limit.ts](lib/rate-limit.ts) + Upstash Redis, before `resolve_and_track` is ever called; fails open if Redis is unreachable
+- [x] Surface browser/OS breakdown in analytics UI — added `top_browsers`/`top_os` to `get_analytics` RPC ([supabase/migrations/0011_get_analytics_v5.sql](supabase/migrations/0011_get_analytics_v5.sql), pushed to remote) and two new widgets on [app/(dashboard)/dashboard/analytics/page.tsx](app/(dashboard)/dashboard/analytics/page.tsx)
 - [ ] Tag management — add `updateTag`/`deleteTag` (only `createTag` exists today)
 - [ ] Multi-select tag filter — [components/tag-filter.tsx](components/tag-filter.tsx) only supports one tag at a time
 - [ ] Link archiving — currently only hard delete, add an `archived` state

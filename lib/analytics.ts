@@ -32,6 +32,8 @@ export type AnalyticsTopLink = { id: string; slug: string; clicks: number };
 export type AnalyticsTopReferrer = { host: string; clicks: number };
 export type AnalyticsTopDevice = { device: string; clicks: number };
 export type AnalyticsTopCountry = { country: string; clicks: number };
+export type AnalyticsTopBrowser = { browser: string; clicks: number };
+export type AnalyticsTopOs = { os: string; clicks: number };
 
 export type Analytics = {
     total: number;
@@ -41,6 +43,8 @@ export type Analytics = {
     top_referrers: AnalyticsTopReferrer[];
     top_devices: AnalyticsTopDevice[];
     top_countries: AnalyticsTopCountry[];
+    top_browsers: AnalyticsTopBrowser[];
+    top_os: AnalyticsTopOs[];
     bucket: AnalyticsBucket;
 };
 
