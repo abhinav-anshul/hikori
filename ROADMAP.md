@@ -28,7 +28,7 @@ Snapshot of current state and what to build next, based on a full read of the co
 - [x] Surface browser/OS breakdown in analytics UI — added `top_browsers`/`top_os` to `get_analytics` RPC ([supabase/migrations/0011_get_analytics_v5.sql](supabase/migrations/0011_get_analytics_v5.sql), pushed to remote) and two new widgets on [app/(dashboard)/dashboard/analytics/page.tsx](app/(dashboard)/dashboard/analytics/page.tsx)
 - [x] Tag management — added `updateTag`/`deleteTag` ([app/(dashboard)/dashboard/links/action.ts](app/(dashboard)/dashboard/links/action.ts)), a reusable [components/manage-tags-dialog.tsx](components/manage-tags-dialog.tsx) (rename/recolor/delete), plus a new [/dashboard/tags](app/(dashboard)/dashboard/tags/page.tsx) page listing tags with total clicks and a client-side search
 - [ ] Multi-select tag filter — [components/tag-filter.tsx](components/tag-filter.tsx) only supports one tag at a time
-- [ ] Link archiving — currently only hard delete, add an `archived` state
+- [x] Link archiving — added `archived` column + updated `resolve_and_track` ([supabase/migrations/0012_links_archived.sql](supabase/migrations/0012_links_archived.sql) — **not yet pushed to remote**, run `supabase db push`), `archiveLink`/`unarchiveLink` actions, an Active/Archived toggle ([components/link-status-filter.tsx](components/link-status-filter.tsx)), and an archive button in [components/link-row-actions.tsx](components/link-row-actions.tsx) alongside the existing hard-delete
 
 ## 2. Minor features
 
