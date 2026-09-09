@@ -7,7 +7,9 @@ const EXEMPT_PATHS = new Set(["/", "/login", "/signup"]);
 export async function proxy(request: NextRequest) {
     const { pathname } = request.nextUrl;
     const isPublicRedirect =
-        !pathname.startsWith("/dashboard") && !EXEMPT_PATHS.has(pathname);
+        !pathname.startsWith("/dashboard") &&
+        !pathname.startsWith("/auth/") &&
+        !EXEMPT_PATHS.has(pathname);
 
     if (isPublicRedirect) {
         const xff = request.headers.get("x-forwarded-for");

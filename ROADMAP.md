@@ -33,8 +33,8 @@ Snapshot of current state and what to build next, based on a full read of the co
 ## 2. Minor features
 
 - [ ] Password reset flow (Supabase `resetPasswordForEmail` isn't used anywhere)
-- [ ] OAuth login (Google/GitHub via Supabase `signInWithOAuth`)
-- [ ] Finish signup flow (real form + `signUp()` call)
+- [x] OAuth login — Google done: [components/google-signin-button.tsx](components/google-signin-button.tsx) + [app/auth/callback/route.ts](app/auth/callback/route.ts), wired into [app/(login)/login/page.tsx](app/(login)/login/page.tsx), verified working end-to-end. GitHub not started.
+- [x] Finish signup flow — real form + `signUp()` in [app/(signup)/signup/page.tsx](app/(signup)/signup/page.tsx), with a "check your email" state (Confirm-email is on for this project) reusing the same `/auth/callback` route as Google OAuth, plus the Google button on signup too
 - [ ] Link expiration (`expires_at` column + redirect-time check)
 - [ ] Password-protected links
 - [ ] Bulk link actions (multi-select delete/tag/archive)

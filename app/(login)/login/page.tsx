@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { redirect } from "next/navigation";
+import { GoogleSignInButton } from "@/components/google-signin-button";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { getServerClient } from "@/lib/supabase";
@@ -87,6 +88,14 @@ export default async function Login({
                         Sign in
                     </Button>
                 </form>
+
+                <div className="flex items-center gap-3">
+                    <div className="h-px flex-1 bg-border" />
+                    <span className="text-xs text-muted-foreground">or</span>
+                    <div className="h-px flex-1 bg-border" />
+                </div>
+
+                <GoogleSignInButton />
 
                 <p className="text-center text-xs text-muted-foreground">
                     Don&apos;t have an account?{" "}
