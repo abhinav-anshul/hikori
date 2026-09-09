@@ -2,7 +2,14 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { BarChart3, ChevronsUpDown, Globe, Link2, LogOut } from "lucide-react";
+import {
+    BarChart3,
+    ChevronsUpDown,
+    Globe,
+    Link2,
+    LogOut,
+    Tag,
+} from "lucide-react";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar"
 import {
     DropdownMenu,
@@ -25,6 +32,7 @@ import {
 
 const items = [
     { title: "Links", href: "/dashboard/links", icon: Link2 },
+    { title: "Tags", href: "/dashboard/tags", icon: Tag },
     { title: "Domains", href: "/dashboard/domains", icon: Globe },
     { title: "Analytics", href: "/dashboard/analytics", icon: BarChart3 },
 ];

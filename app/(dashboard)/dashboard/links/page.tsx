@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { LinkFormDialog } from "@/components/link-form-dialog";
 import { DestinationFavicon } from "@/components/destination-favicon";
 import { LinkRowActions } from "@/components/link-row-actions";
+import { LinkStatusFilter } from "@/components/link-status-filter";
 import { Sparkline, type SparklinePoint } from "@/components/sparkline";
 import { TagChip } from "@/components/tag-chip";
 import { TagFilter } from "@/components/tag-filter";
@@ -55,9 +56,10 @@ type LinkTagRow = { link_id: string; tag: Tag | null };
 export default async function Links({
     searchParams,
 }: {
-    searchParams: Promise<{ tag?: string }>;
+    searchParams: Promise<{ tag?: string; status?: string }>;
 }) {
-    const { tag: filterTagId = null } = await searchParams;
+    const { tag: filterTagId = null, status } = await searchParams;
+    const showArchived = status === "archived";
 
     const supabase = await getServerClient();
 
@@ -75,7 +77,8 @@ export default async function Links({
 
     let linksQuery = supabase
         .from("links")
-        .select("id, slug, target_url, click_count, created_at")
+        .select("id, slug, target_url, click_count, created_at, archived")
+        .eq("archived", showArchived)
         .order("created_at", { ascending: false });
     if (linkIdFilter) {
         linksQuery = linksQuery.in(
@@ -122,6 +125,9 @@ export default async function Links({
                     <LinkFormDialog availableTags={availableTags} />
                 </header>
                 <div className="flex items-center gap-2">
+                    <LinkStatusFilter
+                        current={showArchived ? "archived" : "active"}
+                    />
                     <TagFilter tags={availableTags} current={filterTagId} />
                 </div>
             </div>
@@ -205,6 +211,7 @@ export default async function Links({
                                         id: link.id,
                                         slug: link.slug,
                                         target_url: link.target_url,
+                                        archived: link.archived,
                                     }}
                                     availableTags={availableTags}
                                     initialTags={linkTags}
@@ -233,6 +240,20 @@ export default async function Links({
                         >
                             Clear filter
                         </Link>
+                    </div>
+                </div>
+            ) : showArchived ? (
+                <div className="rounded-lg border border-border bg-card p-12">
+                    <div className="mx-auto max-w-sm space-y-4 text-center">
+                        <Link2 className="size-6 mx-auto text-muted-foreground" />
+                        <div className="space-y-1.5">
+                            <h2 className="text-base font-semibold">
+                                No archived links
+                            </h2>
+                            <p className="text-xs text-muted-foreground">
+                                Links you archive will show up here.
+                            </p>
+                        </div>
                     </div>
                 </div>
             ) : (

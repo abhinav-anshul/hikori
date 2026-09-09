@@ -1,16 +1,31 @@
 "use client";
 
-import { Check, Copy, Pencil, QrCode, Trash2 } from "lucide-react";
+import {
+    Archive,
+    ArchiveRestore,
+    Check,
+    Copy,
+    Pencil,
+    QrCode,
+    Trash2,
+} from "lucide-react";
 import { useState } from "react";
 
 import { LinkFormDialog } from "@/components/link-form-dialog";
 import { QrCodeDialog } from "@/components/qr-code-dialog";
 import {
+    archiveLink,
     deleteLink,
+    unarchiveLink,
     type Tag,
 } from "@/app/(dashboard)/dashboard/links/action";
 
-type LinkSummary = { id: string; slug: string; target_url: string };
+type LinkSummary = {
+    id: string;
+    slug: string;
+    target_url: string;
+    archived?: boolean;
+};
 
 const ICON_BUTTON =
     "inline-flex size-7 items-center justify-center rounded-sm text-muted-foreground transition-colors hover:bg-accent hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring";
@@ -78,6 +93,23 @@ export function LinkRowActions({
                     <Pencil className="size-4" />
                 </button>
             </LinkFormDialog>
+
+            <form action={link.archived ? unarchiveLink : archiveLink}>
+                <input type="hidden" name="id" value={link.id} />
+                <button
+                    type="submit"
+                    aria-label={
+                        link.archived ? "Unarchive link" : "Archive link"
+                    }
+                    className={ICON_BUTTON}
+                >
+                    {link.archived ? (
+                        <ArchiveRestore className="size-4" />
+                    ) : (
+                        <Archive className="size-4" />
+                    )}
+                </button>
+            </form>
 
             <form action={deleteLink} onSubmit={handleDeleteSubmit}>
                 <input type="hidden" name="id" value={link.id} />

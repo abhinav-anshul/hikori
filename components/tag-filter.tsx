@@ -1,13 +1,16 @@
 "use client";
 
-import { Check, ChevronDown, Tag as TagIcon } from "lucide-react";
+import { Check, ChevronDown, Settings2, Tag as TagIcon } from "lucide-react";
 import { useRouter, useSearchParams } from "next/navigation";
+import { useState } from "react";
 
+import { ManageTagsDialog } from "@/components/manage-tags-dialog";
 import { TagChip } from "@/components/tag-chip";
 import {
     DropdownMenu,
     DropdownMenuContent,
     DropdownMenuItem,
+    DropdownMenuSeparator,
     DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { tagDotClass } from "@/lib/tag-colors";
@@ -23,6 +26,7 @@ export function TagFilter({
 }) {
     const router = useRouter();
     const searchParams = useSearchParams();
+    const [manageOpen, setManageOpen] = useState(false);
 
     const select = (tagId: string | null) => {
         const params = new URLSearchParams(searchParams.toString());
@@ -37,59 +41,73 @@ export function TagFilter({
         : null;
 
     return (
-        <DropdownMenu>
-            <DropdownMenuTrigger className="inline-flex items-center gap-1.5 rounded-sm border border-border bg-card px-2.5 py-1 text-xs text-muted-foreground transition-colors hover:bg-accent hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring">
-                {currentTag ? (
-                    <>
-                        <span
-                            className={cn(
-                                "size-2 rounded-full",
-                                tagDotClass(currentTag.color),
-                            )}
-                        />
-                        <span className="text-foreground">
-                            {currentTag.name}
-                        </span>
-                    </>
-                ) : (
-                    <>
-                        <TagIcon className="size-3" />
-                        All tags
-                    </>
-                )}
-                <ChevronDown className="size-3" />
-            </DropdownMenuTrigger>
-
-            <DropdownMenuContent align="end" className="min-w-[10rem]">
-                <DropdownMenuItem
-                    onClick={() => select(null)}
-                    className="justify-between"
-                >
-                    <span className="text-sm">All links</span>
-                    {!current && (
-                        <Check className="size-3 text-muted-foreground" />
+        <>
+            <DropdownMenu>
+                <DropdownMenuTrigger className="inline-flex items-center gap-1.5 rounded-sm border border-border bg-card px-2.5 py-1 text-xs text-muted-foreground transition-colors hover:bg-accent hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring">
+                    {currentTag ? (
+                        <>
+                            <span
+                                className={cn(
+                                    "size-2 rounded-full",
+                                    tagDotClass(currentTag.color),
+                                )}
+                            />
+                            <span className="text-foreground">
+                                {currentTag.name}
+                            </span>
+                        </>
+                    ) : (
+                        <>
+                            <TagIcon className="size-3" />
+                            All tags
+                        </>
                     )}
-                </DropdownMenuItem>
+                    <ChevronDown className="size-3" />
+                </DropdownMenuTrigger>
 
-                {tags.length === 0 ? (
-                    <div className="px-2 py-1.5 text-xs text-muted-foreground">
-                        No tags yet.
-                    </div>
-                ) : (
-                    tags.map((t) => (
-                        <DropdownMenuItem
-                            key={t.id}
-                            onClick={() => select(t.id)}
-                            className="justify-between"
-                        >
-                            <TagChip tag={t} />
-                            {t.id === current && (
-                                <Check className="size-3 text-muted-foreground" />
-                            )}
-                        </DropdownMenuItem>
-                    ))
-                )}
-            </DropdownMenuContent>
-        </DropdownMenu>
+                <DropdownMenuContent align="end" className="min-w-[10rem]">
+                    <DropdownMenuItem
+                        onClick={() => select(null)}
+                        className="justify-between"
+                    >
+                        <span className="text-sm">All links</span>
+                        {!current && (
+                            <Check className="size-3 text-muted-foreground" />
+                        )}
+                    </DropdownMenuItem>
+
+                    {tags.length === 0 ? (
+                        <div className="px-2 py-1.5 text-xs text-muted-foreground">
+                            No tags yet.
+                        </div>
+                    ) : (
+                        tags.map((t) => (
+                            <DropdownMenuItem
+                                key={t.id}
+                                onClick={() => select(t.id)}
+                                className="justify-between"
+                            >
+                                <TagChip tag={t} />
+                                {t.id === current && (
+                                    <Check className="size-3 text-muted-foreground" />
+                                )}
+                            </DropdownMenuItem>
+                        ))
+                    )}
+
+                    <DropdownMenuSeparator />
+                    <DropdownMenuItem onClick={() => setManageOpen(true)}>
+                        <Settings2 className="size-3.5" />
+                        <span className="text-sm">Manage tags</span>
+                    </DropdownMenuItem>
+                </DropdownMenuContent>
+            </DropdownMenu>
+
+            <ManageTagsDialog
+                tags={tags}
+                open={manageOpen}
+                onOpenChange={setManageOpen}
+            />
+        </>
     );
 }

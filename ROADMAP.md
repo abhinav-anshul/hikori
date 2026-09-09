@@ -26,7 +26,7 @@ Snapshot of current state and what to build next, based on a full read of the co
 - [x] Fix hardcoded user name — [components/app-sidebar.tsx:98](components/app-sidebar.tsx#L98) now derives display name from the user's email prefix (no `profiles`/name field exists yet)
 - [x] Rate-limit the redirect endpoint — [proxy.ts](proxy.ts) now blocks with 429 (30 req/min/IP, sliding window) via [lib/rate-limit.ts](lib/rate-limit.ts) + Upstash Redis, before `resolve_and_track` is ever called; fails open if Redis is unreachable
 - [x] Surface browser/OS breakdown in analytics UI — added `top_browsers`/`top_os` to `get_analytics` RPC ([supabase/migrations/0011_get_analytics_v5.sql](supabase/migrations/0011_get_analytics_v5.sql), pushed to remote) and two new widgets on [app/(dashboard)/dashboard/analytics/page.tsx](app/(dashboard)/dashboard/analytics/page.tsx)
-- [ ] Tag management — add `updateTag`/`deleteTag` (only `createTag` exists today)
+- [x] Tag management — added `updateTag`/`deleteTag` ([app/(dashboard)/dashboard/links/action.ts](app/(dashboard)/dashboard/links/action.ts)), a reusable [components/manage-tags-dialog.tsx](components/manage-tags-dialog.tsx) (rename/recolor/delete), plus a new [/dashboard/tags](app/(dashboard)/dashboard/tags/page.tsx) page listing tags with total clicks and a client-side search
 - [ ] Multi-select tag filter — [components/tag-filter.tsx](components/tag-filter.tsx) only supports one tag at a time
 - [ ] Link archiving — currently only hard delete, add an `archived` state
 

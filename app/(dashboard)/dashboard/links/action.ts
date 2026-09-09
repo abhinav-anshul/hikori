@@ -109,6 +109,26 @@ export async function deleteLink(formData: FormData) {
     revalidatePath("/dashboard/links");
 }
 
+export async function archiveLink(formData: FormData) {
+    const id = String(formData.get("id") ?? "");
+    if (!id) return;
+
+    const supabase = await getServerClient();
+    await supabase.from("links").update({ archived: true }).eq("id", id);
+
+    revalidatePath("/dashboard/links");
+}
+
+export async function unarchiveLink(formData: FormData) {
+    const id = String(formData.get("id") ?? "");
+    if (!id) return;
+
+    const supabase = await getServerClient();
+    await supabase.from("links").update({ archived: false }).eq("id", id);
+
+    revalidatePath("/dashboard/links");
+}
+
 // ------------------- tags ---------------------------------------------
 
 export type CreateTagResult = { tag?: Tag; error?: string };
@@ -141,5 +161,47 @@ export async function createTag(
     }
 
     revalidatePath("/dashboard/links");
+    revalidatePath("/dashboard/tags");
     return { tag: data };
+}
+
+export async function updateTag(
+    id: string,
+    name: string,
+    color: string,
+): Promise<CreateTagResult> {
+    const trimmed = name.trim();
+    if (!trimmed) return { error: "Name required." };
+    if (trimmed.length > 32) return { error: "Name too long (max 32)." };
+    if (!isTagColor(color)) return { error: "Invalid color." };
+
+    const supabase = await getServerClient();
+    const { data, error } = await supabase
+        .from("tags")
+        .update({ name: trimmed, color })
+        .eq("id", id)
+        .select("id, name, color")
+        .single();
+
+    if (error) {
+        if (error.code === "23505")
+            return { error: "Tag with that name already exists." };
+        return { error: "Could not update tag." };
+    }
+
+    revalidatePath("/dashboard/links");
+    revalidatePath("/dashboard/tags");
+    return { tag: data };
+}
+
+export async function deleteTag(id: string): Promise<{ error?: string }> {
+    if (!id) return { error: "Missing tag id." };
+
+    const supabase = await getServerClient();
+    const { error } = await supabase.from("tags").delete().eq("id", id);
+    if (error) return { error: "Could not delete tag." };
+
+    revalidatePath("/dashboard/links");
+    revalidatePath("/dashboard/tags");
+    return {};
 }
