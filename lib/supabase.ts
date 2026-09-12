@@ -4,7 +4,7 @@ import { createServerClient } from "@supabase/ssr";
 
 const PROTECTED_PREFIX = "/dashboard";
 const HOME_PATH = "/dashboard/links";
-const AUTH_PATHS = ["/login", "/signup"];
+const AUTH_PATHS = ["/login", "/signup", "/forgot-password"];
 
 // Use inside pages and Server Actions (e.g. the login() action).
 // Reads/writes auth cookies via Next's cookies() API.

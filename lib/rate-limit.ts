@@ -17,6 +17,14 @@ const redirectLimiter = redis
       })
     : null;
 
+const authLimiter = redis
+    ? new Ratelimit({
+          redis,
+          limiter: Ratelimit.slidingWindow(5, "60 s"),
+          prefix: "ratelimit:auth",
+      })
+    : null;
+
 // Fails open when Upstash isn't configured or the request to it errors,
 // so a rate-limiter outage degrades to "unprotected" rather than
 // breaking every link redirect.
@@ -25,6 +33,21 @@ export async function isRedirectRateLimited(ip: string): Promise<boolean> {
 
     try {
         const { success } = await redirectLimiter.limit(ip);
+        return !success;
+    } catch (err) {
+        console.error("rate limit check failed:", err);
+        return false;
+    }
+}
+
+// Same fail-open tradeoff as the redirect limiter, applied to
+// login/signup submissions — an Upstash outage shouldn't lock
+// everyone out of the app.
+export async function isAuthRateLimited(ip: string): Promise<boolean> {
+    if (!authLimiter) return false;
+
+    try {
+        const { success } = await authLimiter.limit(ip);
         return !success;
     } catch (err) {
         console.error("rate limit check failed:", err);
