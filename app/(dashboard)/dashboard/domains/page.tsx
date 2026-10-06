@@ -1,38 +1,20 @@
-import { Check, Globe, Plus } from "lucide-react";
+import { AlertTriangle, Check, Globe, Plus } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { DomainFormDialog } from "@/components/domain-form-dialog";
 import { DomainRow, type DomainRowData } from "@/components/domain-row";
 import { getAppHost } from "@/lib/app-url";
+import { getServerClient } from "@/lib/supabase";
 
-// Mock data for Step 1 — replaced with real data in Step 2.
-const MOCK_DOMAINS: DomainRowData[] = [
-    {
-        id: "1",
-        domain: "links.popclub.co",
-        status: "verified",
-        verification_token: "8f3k2q9xa1c4d7e8",
-        created_at: "2026-05-10T10:00:00Z",
-    },
-    {
-        id: "2",
-        domain: "go.example.com",
-        status: "pending",
-        verification_token: "b2j7n5pq1z3w6v9k",
-        created_at: "2026-05-29T14:30:00Z",
-    },
-    {
-        id: "3",
-        domain: "r.brand.io",
-        status: "failed",
-        verification_token: "m4t8s1xy7r2u5o6p",
-        created_at: "2026-05-22T09:15:00Z",
-    },
-];
+export default async function Domains() {
+    const supabase = await getServerClient();
+    const { data, error } = await supabase
+        .from("domains")
+        .select("id, domain, status, verification_token, created_at")
+        .order("created_at", { ascending: false });
+    const domains = data as DomainRowData[] | null;
 
-export default function Domains() {
-    const domains = MOCK_DOMAINS;
     const defaultHost = getAppHost() || "hikori.app";
 
     return (
@@ -56,7 +38,22 @@ export default function Domains() {
                 </TabsList>
 
                 <TabsContent value="custom">
-                    {domains.length > 0 ? (
+                    {error ? (
+                        <div className="rounded-lg border border-border bg-card p-12">
+                            <div className="mx-auto max-w-sm space-y-4 text-center">
+                                <AlertTriangle className="size-6 mx-auto text-destructive" />
+                                <div className="space-y-1.5">
+                                    <h2 className="text-base font-semibold text-destructive">
+                                        Couldn&apos;t load domains
+                                    </h2>
+                                    <p className="text-xs text-muted-foreground">
+                                        Something went wrong fetching your
+                                        domains. Try refreshing the page.
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    ) : domains && domains.length > 0 ? (
                         <ul className="space-y-3">
                             {domains.map((d) => (
                                 <DomainRow key={d.id} domain={d} />

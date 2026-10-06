@@ -1,7 +1,7 @@
 "use client";
 
 import { ArrowRight } from "lucide-react";
-import { useState } from "react";
+import { useActionState, useEffect, useState } from "react";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -14,9 +14,15 @@ import {
     DialogTrigger,
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
+import {
+    addDomain,
+    type DomainFormState,
+} from "@/app/(dashboard)/dashboard/domains/action";
 
 const DOMAIN_PATTERN =
     "^(?!-)[A-Za-z0-9-]{1,63}(?<!-)(\\.(?!-)[A-Za-z0-9-]{1,63}(?<!-))+$";
+
+const INITIAL_STATE: DomainFormState = {};
 
 export function DomainFormDialog({
     children,
@@ -25,6 +31,21 @@ export function DomainFormDialog({
 }) {
     const [open, setOpen] = useState(false);
     const [domain, setDomain] = useState("");
+    const [state, formAction, pending] = useActionState<DomainFormState, FormData>(
+        addDomain,
+        INITIAL_STATE,
+    );
+
+    // Reset the field whenever the dialog opens so a stale value
+    // doesn't survive a cancel.
+    useEffect(() => {
+        if (open) setDomain("");
+    }, [open]);
+
+    // Close the dialog once the action returns success.
+    useEffect(() => {
+        if (state.success && open) setOpen(false);
+    }, [state.success, open]);
 
     return (
         <Dialog open={open} onOpenChange={setOpen}>
@@ -42,19 +63,12 @@ export function DomainFormDialog({
                 <DialogHeader>
                     <DialogTitle>Add a custom domain</DialogTitle>
                     <DialogDescription>
-                        Use your own domain for short links. You'll add DNS
-                        records to verify ownership and route traffic.
+                        Use your own domain for short links. You&apos;ll add
+                        DNS records to verify ownership and route traffic.
                     </DialogDescription>
                 </DialogHeader>
 
-                <form
-                    onSubmit={(e) => {
-                        e.preventDefault();
-                        setOpen(false);
-                        setDomain("");
-                    }}
-                    className="space-y-4"
-                >
+                <form action={formAction} className="space-y-4">
                     <div>
                         <label
                             htmlFor="domain"
@@ -80,17 +94,23 @@ export function DomainFormDialog({
                         <p className="text-xs text-muted-foreground mt-1.5">
                             Use a subdomain like{" "}
                             <span className="font-mono">go.example.com</span>{" "}
-                            — apex domains aren't supported yet.
+                            — apex domains aren&apos;t supported yet.
                         </p>
                     </div>
+
+                    {state.error && (
+                        <p className="text-xs text-destructive">
+                            {state.error}
+                        </p>
+                    )}
 
                     <DialogFooter>
                         <Button
                             type="submit"
-                            disabled={!domain.trim()}
+                            disabled={!domain.trim() || pending}
                             className="font-normal"
                         >
-                            Add domain
+                            {pending ? "Adding…" : "Add domain"}
                         </Button>
                     </DialogFooter>
                 </form>

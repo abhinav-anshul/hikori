@@ -10,11 +10,15 @@ import {
     Settings,
     Trash2,
 } from "lucide-react";
-import { useState } from "react";
+import { useState, useTransition } from "react";
 
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { timeAgo } from "@/lib/time";
+import {
+    deleteDomain,
+    verifyDomain,
+} from "@/app/(dashboard)/dashboard/domains/action";
 
 export type DomainStatus = "pending" | "verified" | "failed";
 
@@ -88,21 +92,32 @@ function CopyValue({ value, label }: { value: string; label: string }) {
 
 export function DomainRow({ domain }: { domain: DomainRowData }) {
     const [open, setOpen] = useState(false);
-    const [verifying, setVerifying] = useState(false);
+    const [current, setCurrent] = useState(domain);
+    const [rowError, setRowError] = useState<string | null>(null);
+    const [pending, startTransition] = useTransition();
 
-    const txtName = `_hikori.${domain.domain}`;
-    const txtValue = `hikori-verify=${domain.verification_token}`;
+    const txtName = `_hikori.${current.domain}`;
+    const txtValue = `hikori-verify=${current.verification_token}`;
 
     const handleVerify = () => {
-        setVerifying(true);
-        setTimeout(() => setVerifying(false), 1200);
+        setRowError(null);
+        startTransition(async () => {
+            const result = await verifyDomain(current.id);
+            if (result.domain) setCurrent(result.domain);
+            if (result.error) setRowError(result.error);
+        });
     };
 
     const handleDelete = () => {
-        if (!confirm(`Delete ${domain.domain}? This cannot be undone.`)) return;
+        if (!confirm(`Delete ${current.domain}? This cannot be undone.`)) return;
+        setRowError(null);
+        startTransition(async () => {
+            const result = await deleteDomain(current.id);
+            if (result.error) setRowError(result.error);
+        });
     };
 
-    const createdLabel = timeAgo(domain.created_at);
+    const createdLabel = timeAgo(current.created_at);
 
     return (
         <li className="rounded-lg border border-border bg-card p-4">
@@ -110,9 +125,9 @@ export function DomainRow({ domain }: { domain: DomainRowData }) {
                 <div className="min-w-0 space-y-1">
                     <div className="flex flex-wrap items-center gap-x-2 gap-y-1">
                         <span className="text-sm font-medium">
-                            {domain.domain}
+                            {current.domain}
                         </span>
-                        <StatusBadge status={domain.status} />
+                        <StatusBadge status={current.status} />
                         <span className="text-xs text-muted-foreground">
                             · Added {createdLabel}
                         </span>
@@ -120,20 +135,20 @@ export function DomainRow({ domain }: { domain: DomainRowData }) {
                 </div>
 
                 <div className="flex shrink-0 items-center gap-2">
-                    {domain.status !== "verified" && (
+                    {current.status !== "verified" && (
                         <Button
                             size="sm"
                             variant="outline"
                             className="font-normal"
                             onClick={handleVerify}
-                            disabled={verifying}
+                            disabled={pending}
                         >
-                            {verifying ? (
+                            {pending ? (
                                 <>
                                     <RotateCw className="size-4 animate-spin" />
                                     Checking…
                                 </>
-                            ) : domain.status === "failed" ? (
+                            ) : current.status === "failed" ? (
                                 <>
                                     <RotateCw className="size-4" />
                                     Retry
@@ -157,8 +172,9 @@ export function DomainRow({ domain }: { domain: DomainRowData }) {
                     <button
                         type="button"
                         onClick={handleDelete}
+                        disabled={pending}
                         aria-label="Delete domain"
-                        className="inline-flex size-7 items-center justify-center rounded-sm text-muted-foreground transition-colors hover:bg-destructive/10 hover:text-destructive focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                        className="inline-flex size-7 items-center justify-center rounded-sm text-muted-foreground transition-colors hover:bg-destructive/10 hover:text-destructive focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50"
                     >
                         <Trash2 className="size-4" />
                     </button>
@@ -211,7 +227,7 @@ export function DomainRow({ domain }: { domain: DomainRowData }) {
                                     Name
                                 </span>
                                 <CopyValue
-                                    value={domain.domain}
+                                    value={current.domain}
                                     label="CNAME name"
                                 />
                                 <span className="text-xs text-muted-foreground">
@@ -225,10 +241,10 @@ export function DomainRow({ domain }: { domain: DomainRowData }) {
                         </div>
                     </div>
 
-                    {domain.status === "failed" && (
+                    {(rowError || current.status === "failed") && (
                         <p className="text-xs text-destructive">
-                            We couldn't find the verification record. Double-check
-                            the values above and try again.
+                            {rowError ??
+                                "We couldn't find the verification record. Double-check the values above and try again."}
                         </p>
                     )}
                 </div>
