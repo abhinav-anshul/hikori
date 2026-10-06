@@ -1,6 +1,6 @@
 # Roadmap
 
-Snapshot of current state and what to build next, based on a full read of the codebase (2026-09-12).
+Snapshot of current state and what to build next, based on a full read of the codebase (2026-09-12, updated 2026-10-06).
 
 ## Current state
 
@@ -11,10 +11,11 @@ Snapshot of current state and what to build next, based on a full read of the co
 - Redirect/resolve engine (`app/[slug]/page.tsx` → `resolve_and_track`) with rich click tracking + per-IP rate limiting (Upstash Redis), skips archived links
 - Basic QR code generation (PNG, download) — [components/qr-code-dialog.tsx](components/qr-code-dialog.tsx)
 
+**In progress (code written, uncommitted, not yet verified end-to-end):**
+- Custom domains (add/verify/delete) — `domains` table + `links.domain_id`, TXT-record ownership verification ([lib/domain-check.ts](lib/domain-check.ts)), Vercel SSL attach/detach ([lib/vercel.ts](lib/vercel.ts)), server actions ([app/(dashboard)/dashboard/domains/action.ts](app/(dashboard)/dashboard/domains/action.ts)), UI wired to real data ([app/(dashboard)/dashboard/domains/page.tsx](app/(dashboard)/dashboard/domains/page.tsx), [components/domain-row.tsx](components/domain-row.tsx), [components/domain-form-dialog.tsx](components/domain-form-dialog.tsx)). Remote schema confirmed to match the migration files via direct SQL inspection (2026-10-05) — columns, RLS policies, indexes, and `resolve_and_track` all checked. What's *not* confirmed: no browser walkthrough of add → DNS verify → Vercel attach → delete has been run (no authenticated session available in this environment), and `VERCEL_TOKEN` has only been confirmed non-empty, not live/working. Known gap on top of that: the redirect engine doesn't resolve by domain — see Minor features below. Don't treat this as shipped until it's been clicked through for real and committed.
+
 **Mocked / stubbed (UI exists, no backend):**
-- Custom domains — [app/(dashboard)/dashboard/domains/page.tsx](app/(dashboard)/dashboard/domains/page.tsx) uses `MOCK_DOMAINS`, no `domains` table. Worse than just fake data: the add-domain dialog ([components/domain-form-dialog.tsx:51-55](components/domain-form-dialog.tsx#L51-L55)) just closes on submit with no effect at all, "Verify" ([components/domain-row.tsx:96-99](components/domain-row.tsx#L96-L99)) is a 1.2s `setTimeout` no-op, "Delete" ([components/domain-row.tsx:101-103](components/domain-row.tsx#L101-L103)) is a bare `confirm()` wired to nothing
 - Landing page shortener demo — [components/marketing/shortener-input.tsx:51](components/marketing/shortener-input.tsx#L51) fakes the result client-side
-- Marketing overselling the above: [app/page.tsx](app/page.tsx) advertises "Custom domains" / "Bring your own domain" — a signed-up user hits the fully-fake feature immediately
 
 **Missing entirely:**
 - Settings page, billing/Stripe, team/workspace multi-tenancy, public API/API keys (`app/api/` doesn't exist), webhooks, outbound email/notifications, error tracking (no Sentry), product analytics (no PostHog/Amplitude), plan/usage limits
@@ -31,8 +32,8 @@ Snapshot of current state and what to build next, based on a full read of the co
 - [ ] **No pagination anywhere** — links list ([app/(dashboard)/dashboard/links/page.tsx:78-82](app/(dashboard)/dashboard/links/page.tsx#L78-L82)) and tags page fetch the full table with no `.limit()`/`.range()`. Fine at demo scale, breaks for any real account with a few thousand links.
 - [ ] **Links list row isn't responsive** — [app/(dashboard)/dashboard/links/page.tsx:159](app/(dashboard)/dashboard/links/page.tsx#L159) packs favicon + URL + sparkline + click badge + 5 icon-buttons into one non-wrapping flex row with zero responsive breakpoints; overflows on mobile.
 - [ ] **Dead code cleanup** — commented-out header block in [app/(dashboard)/layout.tsx:39-45](app/(dashboard)/layout.tsx#L39-L45), leftover `{/* <div>sdf</div> */}` placeholder in [components/app-sidebar.tsx:64-66](components/app-sidebar.tsx#L64-L66), stray double-space in `layout.tsx:37`.
-- [ ] **Design-token nits** — `size-3.5` used in [components/manage-tags-dialog.tsx:206,214](components/manage-tags-dialog.tsx#L206), [components/tags-overview.tsx:37](components/tags-overview.tsx#L37), [components/tag-filter.tsx:100](components/tag-filter.tsx#L100), and a hardcoded (non-token) color in [components/domain-row.tsx:37](components/domain-row.tsx#L37) — both banned by DESIGN.md.
-- [ ] **Confirm `0012_links_archived.sql` is actually pushed to remote** — flagged as not-yet-pushed when archiving landed; no Supabase CLI available in this environment to verify it's since gone out.
+- [ ] **Design-token nits** — `size-3.5` used in [components/manage-tags-dialog.tsx:206,214](components/manage-tags-dialog.tsx#L206), [components/tags-overview.tsx:37](components/tags-overview.tsx#L37), [components/tag-filter.tsx:100](components/tag-filter.tsx#L100), and a hardcoded (non-token) color in [components/domain-row.tsx:41](components/domain-row.tsx#L41) — both banned by DESIGN.md.
+- [x] **Confirm `0012_links_archived.sql` is actually pushed to remote** — confirmed via `supabase migration list` (2026-10-05): the schema for both 0012 and 0013 was already live on the remote database (applied outside the CLI at some point), just not recorded in `supabase_migrations.schema_migrations`. Repaired the history with `supabase migration repair --status applied 0012 0013` so local and remote now agree.
 
 ## 2. Minor features
 
@@ -45,10 +46,11 @@ Snapshot of current state and what to build next, based on a full read of the co
 - [ ] Rate limiting on mutation server actions (`createLink`, `createTag`, etc. have no per-user throttle — all auth-sensitive forms already covered)
 - [ ] Wire the landing-page demo to the real backend instead of faking a slug client-side
 - [ ] Click-event retention sweep (index already exists for it; the job doesn't)
+- [ ] **Redirect engine doesn't resolve by domain** — `resolve_and_track` ([supabase/migrations/0012_links_archived.sql](supabase/migrations/0012_links_archived.sql)) still looks up by `slug` alone with no host/`domain_id` awareness, even though the unique indexes from migration 0013 now allow the same slug to exist once under the default host and again under a custom domain. [app/[slug]/page.tsx](app/[slug]/page.tsx) never reads the request host either. Harmless today if slugs are de-facto unique across hosts, but a real link-collision bug waiting to happen as soon as two hosts reuse a slug.
 
 ## 3. Major features
 
-- [ ] **Real custom domains** — `domains` table, DNS/TXT + CNAME verification, SSL, `domain_id` on `links`, replacing the fully-inert mock UI. Highest-visibility gap: the UI *and* the marketing site already promise this to signed-up users.
+- [ ] **Real custom domains** — code complete and uncommitted: `domains` table + `domain_id` on `links`, TXT-record ownership verification, Vercel SSL attach/detach, server actions, dashboard UI (add/verify/delete) all wired to real data (2026-10-05). Remote schema confirmed to match via direct SQL inspection, but the actual add → verify → Vercel-attach → delete flow has not been run end-to-end in a browser, and the `VERCEL_TOKEN` credential hasn't been confirmed live. Not checking this off until that walkthrough happens and the changes are committed. Also still open: the domain-aware-redirect gap below.
 - [ ] **Team/workspace multi-tenancy** — everything today is keyed on a single `user_id`; no org/team/invite model. Sequence this *before* billing or API keys — retrofitting later touches nearly every table.
 - [ ] **Settings + billing (Stripe)** — no settings route, no subscription/plan model, no billing deps in `package.json`
 - [ ] **Usage caps / plan limits** — nothing throttles link count, click volume, or analytics history per account; only matters once there's a free/paid split, so pairs with billing
@@ -62,7 +64,7 @@ Snapshot of current state and what to build next, based on a full read of the co
 ## Suggested sequencing
 
 1. Remaining quick wins, security-first — the leaked-shaped env var is still a live gap, do this before anything user-facing
-2. Custom domains — first major feature; UI and marketing already set the expectation, currently fully fake
+2. Custom domains: code is wired and the schema is confirmed live, but needs a real browser walkthrough (add → verify → Vercel attach → delete) before trusting it — then commit, then close the domain-aware-redirect gap before it's load-bearing for more than one account
 3. Team/workspace multi-tenancy (before billing or API keys)
 4. Billing, usage caps, API keys, webhooks
 5. Testing + observability — ideally pulled earlier if any of the above ships to real users before this point
