@@ -1,54 +1,12 @@
-"use client";
-
-import { useEffect, useState } from "react";
-import { RoughNotation } from "react-rough-notation";
-
 /**
- * Hand-drawn squiggly underline (rough-notation) that draws itself in on
- * first paint. Reads the brand color from the --primary token at runtime so
- * nothing is hardcoded, and honors prefers-reduced-motion.
+ * Wavy underline accent, drawn natively via CSS text-decoration. Always
+ * fits the text exactly — no JS measurement, no font-load race, no
+ * reflow/misalignment risk, unlike an overlaid hand-drawn annotation.
  */
-export function SquiggleUnderline({
-    children,
-    delay = 900,
-}: {
-    children: React.ReactNode;
-    delay?: number;
-}) {
-    const [show, setShow] = useState(false);
-    const [color, setColor] = useState<string>();
-    const [animate, setAnimate] = useState(true);
-
-    useEffect(() => {
-        const resolved = getComputedStyle(document.documentElement)
-            .getPropertyValue("--primary")
-            .trim();
-        setColor(resolved || undefined);
-
-        const reduced = window.matchMedia(
-            "(prefers-reduced-motion: reduce)",
-        ).matches;
-        setAnimate(!reduced);
-
-        const t = setTimeout(() => setShow(true), reduced ? 0 : delay);
-        return () => clearTimeout(t);
-    }, [delay]);
-
-    // Wait until the token color is read so the annotation never flashes a
-    // wrong/default stroke.
-    if (!color) return <span>{children}</span>;
-
+export function SquiggleUnderline({ children }: { children: React.ReactNode }) {
     return (
-        <RoughNotation
-            type="underline"
-            show={show}
-            color={color}
-            strokeWidth={2}
-            iterations={2}
-            animate={animate}
-            animationDuration={700}
-        >
+        <span className="underline decoration-primary decoration-wavy decoration-2 underline-offset-4">
             {children}
-        </RoughNotation>
+        </span>
     );
 }

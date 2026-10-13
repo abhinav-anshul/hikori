@@ -7,3 +7,6 @@ This version has breaking changes — APIs, conventions, and file structure may 
 # Design system
 
 For any UI work — colors, typography, spacing, components, dark mode — read [DESIGN.md](DESIGN.md) first. It is the source of truth. Do not invent tokens, hardcode colors, or pick arbitrary sizes; pull from the scale defined there.
+
+DO NOT RUN THE CHANGES TO VERIFY - we do it manually
+DO NOT USE PLAYRIGHT OR ANY TESTING LIBRARY

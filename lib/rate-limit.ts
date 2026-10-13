@@ -25,6 +25,14 @@ const authLimiter = redis
       })
     : null;
 
+const guestLinkLimiter = redis
+    ? new Ratelimit({
+          redis,
+          limiter: Ratelimit.slidingWindow(5, "60 s"),
+          prefix: "ratelimit:guest-link",
+      })
+    : null;
+
 // Fails open when Upstash isn't configured or the request to it errors,
 // so a rate-limiter outage degrades to "unprotected" rather than
 // breaking every link redirect.
@@ -48,6 +56,21 @@ export async function isAuthRateLimited(ip: string): Promise<boolean> {
 
     try {
         const { success } = await authLimiter.limit(ip);
+        return !success;
+    } catch (err) {
+        console.error("rate limit check failed:", err);
+        return false;
+    }
+}
+
+// Same fail-open tradeoff, applied to the public, no-signup guest-link
+// creation action — stricter than the redirect limiter since creating
+// a row is more sensitive than reading one.
+export async function isGuestLinkRateLimited(ip: string): Promise<boolean> {
+    if (!guestLinkLimiter) return false;
+
+    try {
+        const { success } = await guestLinkLimiter.limit(ip);
         return !success;
     } catch (err) {
         console.error("rate limit check failed:", err);

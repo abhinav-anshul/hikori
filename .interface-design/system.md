@@ -28,7 +28,7 @@ Type scale (role → size/weight/line-height): Display 36px/600/1.1 (marketing o
 
 **Two metrics side by side are never equal weight.** Primary metric: `text-2xl font-semibold`. Secondary metric next to it: `text-lg font-semibold` — a real step down, not a color-only difference.
 
-**One accent, used sparingly.** Primary green (`--primary`, `#03D37E`, hue ≈156°) is for CTAs, focus rings, active/selected states only. Feature teal (`--feature`, `#025964`, hue ≈209°) is for at most one hero/feature surface per page — never a substitute for `--primary`.
+**One accent, used sparingly.** `--primary` is near-black (`#18181b`) with white `--primary-foreground` — used for CTAs, focus rings, active/selected states only. `--feature` (also `#18181b`) is for at most one brand/feature surface per page — never a substitute for `--primary`. The only other hue in the system is `--destructive` (red) and a single sky-blue chart accent (`--chart-2`).
 
 ## Key component patterns
 
@@ -42,4 +42,12 @@ Type scale (role → size/weight/line-height): Display 36px/600/1.1 (marketing o
 
 ## Color
 
-Neutral ramp intentionally carries a faint teal tint — `oklch(L 0.01 205)`, not pure achromatic `oklch(L 0 0)`. This ties every gray/border/muted-text token to the brand's teal/green family per a hue-holding color system, rather than generic Tailwind gray. Applies to `foreground`, `card`, `popover`, `secondary`, `muted`, `accent`, `border`, `input`, `sidebar` — light and dark.
+Neutral ramp is plain zinc/gray (`#18181b` ink, `#e4e4e7` borders, `#fafafa`/`#f4f4f5` muted surfaces) — no brand hue tinting. Applies to `foreground`, `card`, `popover`, `secondary`, `muted`, `accent`, `border`, `input`, `sidebar`.
+
+## Light mode only
+
+No dark mode, no theme switcher — one fixed `:root` in [globals.css](app/globals.css). Don't design `dark:` variants for new components.
+
+## Typography
+
+Two families, loaded in [lib/fonts.ts](lib/fonts.ts): **Geist** (`font-sans`/`font-heading` — everything, including dashboard chrome) and **Instrument Serif** (`font-display` — marketing hero headline only, one weight only so never force `font-semibold`/`font-bold` on it).

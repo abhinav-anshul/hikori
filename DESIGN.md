@@ -17,24 +17,17 @@ When in doubt, ask: "would this fit in Linear's app?" If the answer is no, simpl
 - shadcn/ui primitives in [components/ui/](components/ui/)
 - `@base-ui/react` for unstyled primitives
 - `lucide-react` for icons (16px default, 20px for primary actions)
-- Inter via `next/font/google` as `--font-sans`
+- **Geist** (`font-sans`/`font-heading`) + **Instrument Serif** (`font-display`) via `next/font/google`, loaded in [lib/fonts.ts](lib/fonts.ts)
+
+## Light mode only — no dark mode
+
+This app is light-only, deliberately. There is no theme switcher and no `.dark` block in [globals.css](app/globals.css) — just one `:root`. A few components still carry `dark:` utility classes (shadcn defaults, tag colors); they're harmless dead weight since nothing ever applies a `.dark` class, but don't add new ones — if you're touching a component with `dark:` classes, feel free to delete them rather than maintain them.
 
 ## Color tokens
 
-All colors live as CSS variables in [globals.css](app/globals.css). **Never hardcode hex/rgb in components.** Always use the semantic token via Tailwind utility (`bg-background`, `text-muted-foreground`, `bg-primary`, `bg-feature`, etc.).
+All colors live as CSS variables in [globals.css](app/globals.css). **Never hardcode hex/rgb in components.** Always use the semantic token via Tailwind utility (`bg-background`, `text-muted-foreground`, `bg-primary`, etc.).
 
-The palette is **neutral surfaces with green accents**. Surfaces (sidebar, page bg, cards, borders) are plain gray — no tint. The green only appears in: primary CTAs, the `feature` hero surface, selected sidebar items, focus rings, and charts.
-
-**Brand colors (the only non-neutral values in the system):**
-
-| Hex | Role | Token |
-|---|---|---|
-| `#03D37E` | Bright mint — primary CTAs, focus rings, positive accents, chart highlight | `--primary`, `--ring`, `--sidebar-primary` |
-| `#025964` | Deep teal — hero "feature" surface, selected sidebar item text/icons | `--feature`, `--sidebar-accent-foreground` |
-| `oklch(0.976 0.01 205)` | Sidebar background only (same faint teal tint as the rest of the neutral ramp) | `--sidebar` |
-| `#FFFFFF` | Main page background, cards, popovers, the active sidebar item pill | `--background`, `--card`, `--popover`, `--sidebar-accent` |
-
-These are not in Tailwind's stock palette and intentionally diverge from `emerald-500` / `teal-900` / `slate-50`. Use the tokens, never the hex.
+The palette is **achromatic neutrals with one near-black ink**. Surfaces, borders, and muted text are plain zinc/gray — `--background`/`--card`/`--popover` white, `--border` `#e4e4e7`, `--muted-foreground` a dark neutral gray (`lab(27.036% 0 0)`, matched against a specific reference). `--primary` is near-black (`#18181b`) with white `--primary-foreground` — the one consistent "ink" color used for CTAs, focus rings, and selected states. `--destructive` (`#dc2626`) is the only other saturated token in UI chrome; `--chart-2` adds a single sky-blue accent (`#0ea5e9`) for data visualization variety.
 
 Semantic tokens (use these, not raw colors):
 
@@ -43,22 +36,20 @@ Semantic tokens (use these, not raw colors):
 | `background` / `foreground` | Page surface and primary text |
 | `card` / `card-foreground` | Raised surfaces, panels |
 | `popover` / `popover-foreground` | Floating menus, dropdowns |
-| `primary` / `primary-foreground` | Primary CTAs (mint green), focused emphasis |
+| `primary` / `primary-foreground` | Primary CTAs, focus rings, selected states (near-black / white) |
 | `secondary` / `secondary-foreground` | Secondary buttons, chips |
 | `muted` / `muted-foreground` | De-emphasized text, placeholders, captions |
 | `accent` / `accent-foreground` | Hover backgrounds, subtle highlights |
-| `feature` / `feature-foreground` | Hero panels and brand-feature surfaces (deep forest teal). Use sparingly — at most one per page (e.g. a "total balance" / dashboard hero card). Not a substitute for `primary`. |
+| `feature` / `feature-foreground` | Flat ink tones for a brand/feature surface. Use sparingly — at most one per page. Not a substitute for `primary`. |
 | `destructive` | Destructive actions, error states |
 | `border` / `input` / `ring` | Dividers, input borders, focus rings |
 | `sidebar*` | Sidebar surface and its nested tokens |
 
-**Dark mode is mandatory.** Every component must be tested in both. The `.dark` class on `<html>` toggles the palette. Never write `dark:` overrides with hardcoded colors — change the token if the dark value is wrong.
-
-**Don't use pure black/white or pure gray.** The palette intentionally tints near-black and near-white with a faint teal hue. If you need a neutral, use `muted` or `secondary` — they already carry the correct tint.
-
 ## Typography
 
-Single family: **Inter** (`font-sans`). No serif, no display font.
+Two families: **Geist** (`font-sans`/`font-heading` — body copy and all dashboard chrome: card/dialog/sheet titles) and **Instrument Serif** (`font-display` — the marketing hero headline only, see `app/page.tsx`). Keep that split: don't apply `font-display` to dashboard UI, and don't apply `font-heading` to large marketing display text — they're intentionally different registers.
+
+Instrument Serif ships only one weight (400/regular) — there's no bold or light variant to reach for. Don't force `font-semibold`/`font-bold` onto `font-display` text; it has no real bold face, so the browser fakes one and it looks wrong. Let it render at its native weight.
 
 | Role | Size | Weight | Line height | Tracking |
 |---|---|---|---|---|
@@ -150,7 +141,7 @@ Transitions: `transition-colors` (150ms default). No bouncy easings. No animatio
 - Helper text below, `text-xs text-muted-foreground`, `mt-1.5`
 - Error text replaces helper text, `text-xs text-destructive`
 - Input height: `h-9` (matches shadcn default)
-- Input fill: `bg-input/20` in light mode, `dark:bg-input/30` in dark — inputs sit slightly inset from their surroundings in both modes, never relying on the border alone to signal "type here"
+- Input fill: `bg-input/20` — inputs sit slightly inset from their surroundings, never relying on the border alone to signal "type here"
 - Group related fields in `space-y-4`; group sections in `space-y-8`
 
 ## Empty / loading / error states
@@ -164,7 +155,7 @@ Every list, table, or data surface needs all three. Don't ship a component that 
 ## What to avoid
 
 - ❌ Hardcoded colors (`#fff`, `bg-zinc-900`, `text-gray-500`) — use tokens
-- ❌ `dark:` utilities with hardcoded values — fix the token instead
+- ❌ New `dark:` utilities — this app is light-only, don't add dark-mode styling
 - ❌ Arbitrary Tailwind values (`text-[15px]`, `p-[13px]`) — pick from the scale or extend the scale
 - ❌ Multiple font weights in one component beyond {400, 500, 600}
 - ❌ Drop shadows for depth — use borders
@@ -177,5 +168,4 @@ Every list, table, or data surface needs all three. Don't ship a component that 
 1. Read this file.
 2. Check [globals.css](app/globals.css) for the relevant token.
 3. If the token is missing or wrong, change the **token** — not the component.
-4. Verify both `.dark` and light mode before declaring done.
-5. If a design need genuinely doesn't fit this system, flag it and propose a token addition rather than a one-off override.
+4. If a design need genuinely doesn't fit this system, flag it and propose a token addition rather than a one-off override.

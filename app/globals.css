@@ -2,11 +2,17 @@
 @import "tw-animate-css";
 @import "shadcn/tailwind.css";
 
+/* Kept inert on purpose: a few components (tag colors, shadcn primitives)
+   still use dark: utilities. Scoping dark: to a .dark class that nothing
+   ever applies means those utilities simply never match, instead of
+   falling back to Tailwind's default (OS prefers-color-scheme) and
+   reacting to the system theme. This app is light-only, deliberately. */
 @custom-variant dark (&:is(.dark *));
 
 @theme inline {
-    --font-heading: var(--font-sans);
     --font-sans: var(--font-sans);
+    --font-heading: var(--font-heading);
+    --font-display: var(--font-display);
     --color-sidebar-ring: var(--sidebar-ring);
     --color-sidebar-border: var(--sidebar-border);
     --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
@@ -50,76 +56,43 @@
 }
 
 :root {
-    --background: #FFFFFF;
-    --foreground: oklch(0.18 0.01 205);
-    --card: #FFFFFF;
-    --card-foreground: oklch(0.18 0.01 205);
-    --popover: #FFFFFF;
-    --popover-foreground: oklch(0.18 0.01 205);
-    --primary: #03D37E;
-    --primary-foreground: oklch(0.18 0.01 205);
-    --secondary: oklch(0.95 0.01 205);
-    --secondary-foreground: oklch(0.20 0.01 205);
-    --muted: oklch(0.96 0.01 205);
-    --muted-foreground: oklch(0.52 0.01 205);
-    --accent: oklch(0.94 0.01 205);
-    --accent-foreground: oklch(0.20 0.01 205);
-    --destructive: oklch(0.577 0.245 27.325);
-    --border: oklch(0.91 0.01 205);
-    --input: oklch(0.91 0.01 205);
-    --ring: #03D37E;
-    --feature: #025964;
-    --feature-foreground: #FFFFFF;
-    --chart-1: #025964;
-    --chart-2: #03D37E;
-    --chart-3: oklch(0.55 0.10 160);
-    --chart-4: oklch(0.85 0.05 155);
-    --chart-5: oklch(0.45 0.06 170);
+    --background: #ffffff;
+    --foreground: #18181b;
+    --card: #ffffff;
+    --card-foreground: #18181b;
+    --popover: #ffffff;
+    --popover-foreground: #18181b;
+    --primary: #18181b;
+    --primary-foreground: #ffffff;
+    --secondary: #f4f4f5;
+    --secondary-foreground: #18181b;
+    --muted: #fafafa;
+    --muted-foreground: lab(27.036% 0 0);
+    --accent: #f4f4f5;
+    --accent-foreground: #18181b;
+    --destructive: #dc2626;
+    --border: #e4e4e7;
+    --input: #e4e4e7;
+    --ring: #18181b;
+    --feature: #18181b;
+    --feature-foreground: #ffffff;
+    --chart-1: #18181b;
+    --chart-2: #0ea5e9;
+    --chart-3: #71717a;
+    --chart-4: #d4d4d8;
+    --chart-5: #dc2626;
+    --font-sans: var(--font-geist);
+    --font-heading: var(--font-geist);
+    --font-display: var(--font-instrument-serif);
     --radius: 0.625rem;
-    --sidebar: oklch(0.976 0.01 205);
-    --sidebar-foreground: oklch(0.18 0.01 205);
-    --sidebar-primary: #03D37E;
-    --sidebar-primary-foreground: oklch(0.18 0.01 205);
-    --sidebar-accent: #FFFFFF;
-    --sidebar-accent-foreground: #025964;
-    --sidebar-border: oklch(0.91 0.01 205);
-    --sidebar-ring: #03D37E;
-}
-
-.dark {
-    --background: oklch(0.145 0.01 205);
-    --foreground: oklch(0.985 0.01 205);
-    --card: oklch(0.205 0.01 205);
-    --card-foreground: oklch(0.985 0.01 205);
-    --popover: oklch(0.205 0.01 205);
-    --popover-foreground: oklch(0.985 0.01 205);
-    --primary: #03D37E;
-    --primary-foreground: oklch(0.18 0.01 205);
-    --secondary: oklch(0.269 0.01 205);
-    --secondary-foreground: oklch(0.985 0.01 205);
-    --muted: oklch(0.269 0.01 205);
-    --muted-foreground: oklch(0.708 0.01 205);
-    --accent: oklch(0.30 0.01 205);
-    --accent-foreground: oklch(0.985 0.01 205);
-    --destructive: oklch(0.704 0.191 22.216);
-    --border: oklch(1 0.01 205 / 10%);
-    --input: oklch(1 0.01 205 / 15%);
-    --ring: #03D37E;
-    --feature: #025964;
-    --feature-foreground: #FFFFFF;
-    --chart-1: #03D37E;
-    --chart-2: #025964;
-    --chart-3: oklch(0.55 0.10 160);
-    --chart-4: oklch(0.85 0.05 155);
-    --chart-5: oklch(0.35 0.05 170);
-    --sidebar: oklch(0.205 0.01 205);
-    --sidebar-foreground: oklch(0.985 0.01 205);
-    --sidebar-primary: #03D37E;
-    --sidebar-primary-foreground: oklch(0.18 0.01 205);
-    --sidebar-accent: oklch(0.28 0.01 205);
-    --sidebar-accent-foreground: #03D37E;
-    --sidebar-border: oklch(1 0.01 205 / 10%);
-    --sidebar-ring: #03D37E;
+    --sidebar: #fafafa;
+    --sidebar-foreground: #18181b;
+    --sidebar-primary: #18181b;
+    --sidebar-primary-foreground: #ffffff;
+    --sidebar-accent: #ffffff;
+    --sidebar-accent-foreground: #18181b;
+    --sidebar-border: #e4e4e7;
+    --sidebar-ring: #18181b;
 }
 
 @layer base {
@@ -131,33 +104,11 @@
     }
   html {
     @apply font-sans;
-    /* Match the hero's soft mint tint (primary at 10% over the page bg) so the
-       macOS overscroll area above the navbar blends with the hero. */
+    /* Soft wash of the brand ink over the page bg so the macOS overscroll
+       area above the navbar isn't a flat, dead gray. */
     background-color: color-mix(in oklab, var(--primary) 10%, var(--background));
+    /* Geist (and most grotesks) sit noticeably wider than Inter at body
+       size by default — tighten site-wide so copy doesn't read loose. */
+    letter-spacing: -0.011em;
     }
 }
-
-/* Marker highlight — the brand-color background sweeps in from the left
-   on first paint, covering the phrase like a highlighter stroke. */
-@keyframes marker-sweep {
-  from { transform: scaleX(0); }
-  to { transform: scaleX(1); }
-}
-
-.marker-highlight::before {
-  content: "";
-  position: absolute;
-  inset: 0;
-  z-index: -1;
-  background-color: var(--primary);
-  transform-origin: left center;
-  animation: marker-sweep 0.5s cubic-bezier(0.22, 1, 0.36, 1) 0.3s both;
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .marker-highlight::before {
-    animation: none;
-    transform: scaleX(1);
-  }
-}
-

@@ -1,8 +1,14 @@
 import Link from "next/link";
-import { BarChart3, Globe, Link2, Sparkles } from "lucide-react";
+import { BarChart3, Link2, Timer } from "lucide-react";
 
 import { ShortenerInput } from "@/components/marketing/shortener-input";
 import { SquiggleUnderline } from "@/components/marketing/squiggle-underline";
+import {
+    AvatarStack,
+    DotTimeline,
+    Sparkline,
+    StatCard,
+} from "@/components/marketing/stat-card";
 import { getAppHost } from "@/lib/app-url";
 
 export default function Page() {
@@ -18,9 +24,9 @@ export default function Page() {
                 Hikori
             </div>
 
-            {/* Hero band — soft mint tint, ~70% of the viewport */}
-            <div className="flex min-h-[70svh] flex-col rounded-b-[3rem] bg-primary/10 text-foreground">
-                <div className="mx-auto flex w-full max-w-6xl flex-1 flex-col px-6 md:px-8">
+            {/* Hero band */}
+            <div className="flex flex-col text-foreground">
+                <div className="mx-auto flex w-full max-w-5xl flex-col px-6 md:px-8">
                     {/* Nav */}
                     <nav className="flex h-16 shrink-0 items-center justify-between">
                         <span className="text-lg font-semibold tracking-tight">
@@ -29,37 +35,29 @@ export default function Page() {
                         <div className="flex items-center gap-2">
                             <Link
                                 href="/login"
-                                className="inline-flex h-9 items-center rounded-md px-3 text-sm font-medium text-muted-foreground transition-colors hover:bg-accent hover:text-foreground"
+                                className="inline-flex h-9 items-center rounded-full border border-border px-3.5 text-sm font-medium text-muted-foreground transition-colors hover:bg-accent hover:text-foreground"
                             >
                                 Login
                             </Link>
                             <Link
                                 href="/signup"
-                                className="inline-flex h-9 items-center rounded-md bg-primary px-3.5 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90"
+                                className="inline-flex h-9 items-center rounded-full bg-primary px-3.5 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90"
                             >
-                                Start free
+                                Buy for $19
                             </Link>
                         </div>
                     </nav>
 
                     {/* Hero copy */}
-                    <section className="flex flex-1 flex-col items-center justify-center gap-6 pt-8 pb-28 text-center">
-                        <span className="inline-flex items-center gap-1.5 rounded-full border border-primary/20 bg-primary/10 px-3 py-1 text-xs font-medium">
-                            <Sparkles className="size-3" />
-                            Short links, custom domains & analytics
-                        </span>
-
-                        <h1 className="max-w-3xl text-balance text-4xl font-semibold leading-[1.1] tracking-tight">
-                            Short links that drive{" "}
-                            <span className="marker-highlight relative isolate inline-block -rotate-2 px-2 text-primary-foreground">
-                                real results
-                            </span>
+                    <section className="flex flex-col items-start gap-6 pt-16 pb-12 text-left">
+                        <h1 className="font-display max-w-2xl text-balance text-4xl leading-[1.1] font-normal tracking-normal">
+                            Track{" "}
+                            <SquiggleUnderline>Everything</SquiggleUnderline>
                         </h1>
 
-                        <p className="max-w-xl text-pretty text-base text-muted-foreground md:text-lg">
-                            Shorten, brand, and{" "}
-                            <SquiggleUnderline>track every link</SquiggleUnderline>
-                            . Bring your own domain and watch the clicks roll
+                        <p className="max-w-lg text-pretty text-sm leading-relaxed text-muted-foreground md:text-base">
+                            Shorten, brand, and track every link. Bring your
+                            own domain and watch the clicks roll
                             in — with analytics that actually tell you
                             something.
                         </p>
@@ -67,28 +65,36 @@ export default function Page() {
                 </div>
             </div>
 
-            {/* Shortener + trust — input straddles the green/white seam */}
-            <div className="mx-auto flex w-full max-w-6xl flex-col items-center gap-6 px-6 pb-20 text-center md:px-8">
+            {/* Shortener + trust */}
+            <div className="mx-auto flex w-full max-w-5xl flex-col items-start gap-6 px-6 pb-20 text-left md:px-8">
                 <ShortenerInput host={host} />
 
-                <p className="text-xs text-muted-foreground">
-                    Free forever plan · No credit card required
-                </p>
-
-                <ul className="mt-6 flex flex-wrap items-center justify-center gap-x-8 gap-y-3 text-sm text-muted-foreground">
-                    <li className="inline-flex items-center gap-2">
-                        <Link2 className="size-4" />
-                        Branded short links
-                    </li>
-                    <li className="inline-flex items-center gap-2">
-                        <Globe className="size-4" />
-                        Custom domains
-                    </li>
-                    <li className="inline-flex items-center gap-2">
-                        <BarChart3 className="size-4" />
-                        Click analytics
-                    </li>
-                </ul>
+                <div className="mt-10 grid w-full grid-cols-1 gap-4 sm:grid-cols-3">
+                    <StatCard
+                        icon={BarChart3}
+                        label="Since launch"
+                        value="1M+"
+                        caption="Total clicks"
+                    >
+                        <Sparkline />
+                    </StatCard>
+                    <StatCard
+                        icon={Link2}
+                        label="All time"
+                        value="50K+"
+                        caption="Links shortened"
+                    >
+                        <AvatarStack />
+                    </StatCard>
+                    <StatCard
+                        icon={Timer}
+                        label="Per redirect"
+                        value="<50ms"
+                        caption="Redirect speed"
+                    >
+                        <DotTimeline />
+                    </StatCard>
+                </div>
             </div>
         </main>
     );
